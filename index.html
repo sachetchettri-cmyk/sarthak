@@ -1008,8 +1008,8 @@ footer a:hover { color: var(--ink); }
       <span class="card-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
       <div class="card-meta"><div class="card-cat">Events &amp; Street</div><div class="card-title">Street-Style Cinematography</div></div>
     </div>
-    <div class="card wide" data-cat="action" data-video="reel13.mp4" data-title="Freestyle Kings — FMX/BMX Highlight">
-      <video src="reel13.mp4" preload="metadata" muted loop playsinline></video>
+    <div class="card wide" data-cat="action" data-video="reel18.mp4" data-title="Freestyle Kings — FMX/BMX Highlight">
+      <video src="reel18.mp4" preload="metadata" muted loop playsinline></video>
       <span class="card-tc">01:15 · FMX/BMX</span>
       <span class="card-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
       <div class="card-meta"><div class="card-cat">Action Sports</div><div class="card-title">Freestyle Kings — Stunt Highlight</div></div>
@@ -1374,16 +1374,33 @@ qtrack.addEventListener('mouseenter', () => clearInterval(autoQ));
 qtrack.addEventListener('mouseleave', () => { autoQ = setInterval(() => go(qi + 1), 6000); });
 
 
-document.getElementById('contactForm').addEventListener('submit', e => {
+document.getElementById('contactForm').addEventListener('submit', async e => {
   e.preventDefault();
-  const name    = document.getElementById('fname').value.trim();
-  const email   = document.getElementById('femail').value.trim();
-  const phone   = document.getElementById('fphone').value.trim();
-  const subject = document.getElementById('fsubject').value.trim() || 'New enquiry via portfolio';
-  const msg     = document.getElementById('fmsg').value.trim();
-  const body    = `Name: ${name}%0AEmail: ${email}%0APhone: ${phone}%0A%0A${encodeURIComponent(msg)}`;
-  window.location.href = `mailto:${CFG.email}?subject=${encodeURIComponent(subject)}&body=${body}`;
-  document.getElementById('formMsg').textContent = 'Opening your email app… or reach out directly at ' + CFG.email;
+  const form = document.getElementById('contactForm');
+  const msg  = document.getElementById('formMsg');
+  const btn  = form.querySelector('.submit');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  try {
+    const res = await fetch('https://formspree.io/f/mzdwqgjl', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: new FormData(form)
+    });
+    if (res.ok) {
+      msg.textContent = '✓ Message sent! Sarthak will get back to you soon.';
+      msg.style.color = '#3ecf5a';
+      form.reset();
+    } else {
+      msg.textContent = 'Something went wrong — email sarthak.kunwar00@gmail.com directly.';
+      msg.style.color = 'var(--accent)';
+    }
+  } catch {
+    msg.textContent = 'Something went wrong — email sarthak.kunwar00@gmail.com directly.';
+    msg.style.color = 'var(--accent)';
+  }
+  btn.textContent = 'Send Email →';
+  btn.disabled = false;
 });
 
 /* ── Hire me glow for first 20s ── */
